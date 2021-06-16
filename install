@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Get submodules
+echo "Cloning submodules..."
+git submodule update --init --recursive
+
+# Run CMake
+echo "Running CMake..."
+cmake .
+
+# Run make
+echo "Running make..."
+make -j

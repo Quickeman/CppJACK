@@ -1,2 +1,2 @@
-# CppJACK
-A C++ wrapper around the C-based JACK API.
+# CppJack
+A C++ wrapper around the C-based Jack API.

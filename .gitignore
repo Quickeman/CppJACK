@@ -30,3 +30,20 @@
 *.exe
 *.out
 *.app
+bin/
+
+# CMake
+*.cmake
+CMakeCache.txt
+CMakeFiles/
+Makefile
+
+# Compile commands
+compile_commands.json
+
+# Unit testing
+Testing/
+test/bin
+
+# VS Code
+.vscode/

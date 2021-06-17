@@ -4,6 +4,8 @@
 #include <vector>
 #include <thread>
 
+#include <cassert>
+
 class SineGenerator : public jack::Callback {
 public:
     SineGenerator(const float sampleRate) {

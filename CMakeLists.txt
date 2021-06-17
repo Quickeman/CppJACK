@@ -18,12 +18,11 @@ include_directories(include)
 add_subdirectory(src)
 add_subdirectory(demo)
 
-set_target_properties(cppjack PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+# Set the header to public
+set_target_properties(cppjack PROPERTIES PUBLIC_HEADER CppJack.h)
 
 # Make PIC
 set_target_properties(cppjack PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-# Set the header to public
-set_target_properties(cppjack PROPERTIES PUBLIC_HEADER include/CppJack.h)
 
 add_subdirectory(test)
 

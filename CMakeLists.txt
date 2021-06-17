@@ -10,6 +10,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 
 include_directories(lib/**)
+include_directories(lib/jack/common/jack/)
 
 # Create CppJack library
 add_library(cppjack STATIC CppJack.cpp)

@@ -9,11 +9,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Request C++ 11 standard features
 set(CMAKE_CXX_STANDARD 11)
 
-# Make sure MacOS looks here for source files
-if(APPLE)
-    include_directories(/usr/local/include)
-    link_directories(/usr/local/lib)
-endif(APPLE)
+# Make sure the compiler looks here for source files
+include_directories(/usr/local/include)
+link_directories(/usr/local/lib)
 
 add_subdirectory(include)
 include_directories(include)

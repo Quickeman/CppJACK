@@ -9,19 +9,23 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Request C++ 11 standard features
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(${PROJECT_SOURCE_DIR}/**)
+# Make sure MacOS looks here for source files
+if(APPLE)
+    include_directories(/usr/local/include)
+    link_directories(/usr/local/lib)
+endif(APPLE)
 
-# Create CppJack library
-add_library(cppjack STATIC CppJack.cpp)
+add_subdirectory(include)
+include_directories(include)
+add_subdirectory(src)
+add_subdirectory(demo)
+
 set_target_properties(cppjack PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
-
-# Link the Jack library
-target_link_libraries(cppjack jack)
 
 # Make PIC
 set_target_properties(cppjack PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 # Set the header to public
-set_target_properties(cppjack PROPERTIES PUBLIC_HEADER CppJack.h)
+set_target_properties(cppjack PROPERTIES PUBLIC_HEADER include/CppJack.h)
 
 add_subdirectory(test)
 

@@ -1,5 +1,13 @@
 include_directories(..)
 
+# Make sure MacOS looks here for source files
+if(APPLE)
+    include_directories(
+        /usr/local/include
+        /usr/local/lib
+    )
+endif(APPLE)
+
 # Include test files
 file(GLOB TEST_SRCS *.cpp)
 # Run through each test file

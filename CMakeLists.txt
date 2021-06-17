@@ -9,8 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Request C++ 11 standard features
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(./**)
-include_directories(lib/jack/common/jack/)
+include_directories(${PROJECT_SOURCE_DIR}/**)
 
 # Create CppJack library
 add_library(cppjack STATIC CppJack.cpp)

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#include "jack.h"
+#include "jack/jack.h"
 
 /** The main namespace for CppJack.
  * All of the API is contained within this namespace.

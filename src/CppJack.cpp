@@ -43,6 +43,8 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
             cout << "Could not connect to Jack server\n";
         }
         cout << "Client failed to open\n";
+    } else {
+        closed = false;
     }
 
     if (jackStatus & JackNameNotUnique) {

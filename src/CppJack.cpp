@@ -11,7 +11,7 @@ Client::Client(int nChannelsOut, int nChannelsIn, string clientName, string serv
 }
 
 Client::~Client() {
-    if (isOpen()) close();
+    if (isOpen() && !closed) close();
 }
 
 void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string serverName) {
@@ -55,7 +55,7 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
 
     // Create the ports/channels
     // Outputs
-    for (int i = 0; i < outPorts.size(); i++) {
+    for (int i = 0; i < nChannelsOut; i++) {
         string name = "output";
         name.append(to_string(i + 1));
         outPorts[i] = jack_port_register(
@@ -73,10 +73,10 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
     }
 
     // Inputs
-    for (int i = 0; i < inPorts.size(); i++) {
+    for (int i = 0; i < nChannelsIn; i++) {
         string name = "input";
         name.append(to_string(i + 1));
-        outPorts[i] = jack_port_register(
+        inPorts[i] = jack_port_register(
             client,
             name.data(),
             JACK_DEFAULT_AUDIO_TYPE,
@@ -147,6 +147,7 @@ void Client::stop() {
 
 void Client::close() {
     jack_client_close(client);
+    closed = true;
 }
 
 int Client::_process(jack_nframes_t nFrames, void* arg) {

@@ -76,7 +76,10 @@ public:
     /** Informs Jack that the client wants to stop processing samples. */
     void stop();
 
-    /** Closes the Jack client. */
+    /** Closes the Jack client.
+     * @note You do not need to call this if the @ref Client object is at the 
+     * end of its lifetime.
+     */
     void close();
 
     /** Returns the client's sample rate.
@@ -127,6 +130,9 @@ private:
     vector<sample_t*> outBuff;
     /** Input buffer. */
     vector<sample_t*> inBuff;
+
+    /** Flag for determining if the destructor needs to call @ref close. */
+    bool closed = false;
 };
 
 } // namespace jack

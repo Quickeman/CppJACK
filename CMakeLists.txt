@@ -6,6 +6,8 @@ project(CppJack)
 # Generate compile_commands.json for clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+enable_testing()
+
 # Request C++ 11 standard features
 set(CMAKE_CXX_STANDARD 11)
 
@@ -24,6 +26,7 @@ set_target_properties(cppjack PROPERTIES PUBLIC_HEADER CppJack.h)
 # Make PIC
 set_target_properties(cppjack PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
+# Tests
 add_subdirectory(test)
 
 # Add definition for the project root directly for file loading

@@ -31,6 +31,7 @@
 *.out
 *.app
 bin/
+*/bin/
 
 # CMake
 *.cmake
@@ -43,7 +44,6 @@ compile_commands.json
 
 # Unit testing
 Testing/
-test/bin
 
 # VS Code
 .vscode/

@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
     shutdownHandler = [&](int signal) {
         cout << "CppJack example_client: caught signal " << signal << "\n";
         client.close();
-    }
+    };
     /* End part 2 */
 
     // The callback used to process samples

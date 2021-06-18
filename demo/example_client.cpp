@@ -3,6 +3,8 @@
 #include <thread>
 #include <iostream>
 
+#include <signal.h>
+
 /* Unix signal handling (part 1) */
 #include <functional>
 // Wrapper for the shutdown lambda expression

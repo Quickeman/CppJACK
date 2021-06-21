@@ -8,8 +8,7 @@
 
 class SineGenerator : public jack::Callback {
 public:
-    SineGenerator(const float sampleRate) {
-        sRate = sampleRate;
+    SineGenerator(const float sample_rate): sRate(sample_rate) {
         norm = frequency / sRate;
         phase = 0.f;
     }
@@ -17,16 +16,16 @@ public:
     void process(int n, vector<jack::sample_t*> output, vector<jack::sample_t*> input) override {
         vector<jack::sample_t> sine(n);
         // Generate sine wave
-        for (auto v : sine) {
-            v = sinf(2.f * M_PI * norm * phase);
+        for (int i = 0; i < sine.size(); i++) {
             phase += norm;
             if (phase >= 1.f) phase -= 1.f;
+            sine[i] = 0.5f * sinf(2.f * M_PI * phase);
         }
 
         // Send to output(s)
-        for (auto ch : output) {
+        for (int c = 0; c < output.size(); c++) {
             for (int i = 0; i < n; i++) {
-                ch[i] = sine[i];
+                output[c][i] = sine[i];
             }
         }
     }

@@ -1,10 +1,10 @@
-#include "CppJack.h"
+#include "testing_framework.h"
 
 #include <math.h>
 #include <vector>
 #include <thread>
 
-#include <cassert>
+using namespace test;
 
 class SineGenerator : public jack::Callback {
 public:
@@ -39,11 +39,9 @@ private:
 
 int main(int argc, char* argv[]) {
     jack::Client client(2, 0, "CppJack_test_output");
-    assert(&client);
-    assert(client.isOpen());
+    check(client.isOpen(), "Jack client failed to open");
 
     SineGenerator sinGen(client.sampleRate());
-    assert(&sinGen);
 
     client.start(&sinGen);
 

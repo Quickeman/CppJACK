@@ -1,4 +1,5 @@
 #include "testing_framework.h"
+#include "CppJack.h"
 
 #include <math.h>
 #include <vector>

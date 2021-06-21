@@ -1,5 +1,3 @@
-#include "CppJack.h"
-
 #include <exception>
 #include <string>
 #include <iostream>

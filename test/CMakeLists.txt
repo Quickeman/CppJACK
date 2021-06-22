@@ -1,4 +1,7 @@
-include_directories(..)
+include_directories(
+    ..
+    framework
+)
 
 # Get test source files
 file(GLOB TEST_SRCS *.cpp)

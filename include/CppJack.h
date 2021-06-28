@@ -25,7 +25,7 @@ public:
      * @param input a vector of input samples. 2D, indexed as [channel][sample].
      * @note the 2nd dimension of `output` and `input` are not vectors, they're raw pointers.
      */
-    virtual void process(int n, std::vector<sample_t*> output, std::vector<sample_t*> input) {};
+    virtual void process(int n, std::vector<sample_t*>& output, std::vector<sample_t*>& input) {};
 };
 
 
@@ -67,7 +67,7 @@ public:
     /** Informs Jack the client is ready to process samples.
      * Once this is called, Jack will begin to periodically request and/or deliver
      * sample buffers.
-     * @param cb @ref Callback-type object to process samples.
+     * @param cb @ref Callback type object to process samples.
      */
     void start(Callback* cb);
 
@@ -81,7 +81,7 @@ public:
     void close();
 
     /** Returns the client's sample rate.
-     * Note: Cannot be called before @ref open.
+     * @note Cannot be called before @ref open.
      */
     inline jack_nframes_t sampleRate() { return jack_get_sample_rate(client); }
 

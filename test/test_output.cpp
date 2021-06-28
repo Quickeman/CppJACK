@@ -15,7 +15,7 @@ public:
         phase = 0.f;
     }
 
-    void process(int n, vector<jack::sample_t*> output, vector<jack::sample_t*> input) override {
+    void process(int n, vector<jack::sample_t*>& output, vector<jack::sample_t*>& input) override {
         vector<jack::sample_t> sine(n);
         // Generate sine wave
         for (int i = 0; i < sine.size(); i++) {

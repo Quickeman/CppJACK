@@ -5,6 +5,8 @@
 #include <vector>
 #include <thread>
 
+using namespace std;
+
 class InOutSwitch : public jack::Callback {
 public:
     InOutSwitch() {
@@ -13,7 +15,7 @@ public:
         playhead = 0;
     }
 
-    void process(int n, vector<jack::sample_t*> output, vector<jack::sample_t*> input) override {
+    void process(int n, vector<jack::sample_t*>& output, vector<jack::sample_t*>& input) override {
         if (modeIn) {
             rec.reserve(rec.size() + n);
             for (int i = 0; i < n; i++) {

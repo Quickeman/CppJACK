@@ -4,8 +4,6 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
 #include "jack/jack.h"
 
 /** The main namespace for CppJack.
@@ -27,7 +25,7 @@ public:
      * @param input a vector of input samples. 2D, indexed as [channel][sample].
      * @note the 2nd dimension of `output` and `input` are not vectors, they're raw pointers.
      */
-    virtual void process(int n, vector<sample_t*> output, vector<sample_t*> input) {};
+    virtual void process(int n, std::vector<sample_t*> output, std::vector<sample_t*> input) {};
 };
 
 
@@ -50,7 +48,7 @@ public:
      * @param clientName desired name of the Jack client.
      * @param serverName name of the desired server to connect to. Leave blank to use the default Jack server.
      */
-    Client(int nChannelsOut, int nChannelsIn, string clientName, string serverName = "");
+    Client(int nChannelsOut, int nChannelsIn, std::string clientName, std::string serverName = "");
 
     /** Destructor.
      * Closes the Jack client if still open.
@@ -64,7 +62,7 @@ public:
      * @param clientName desired name of the Jack client.
      * @param serverName name of the desired server to connect to. Leave blank to use the default Jack server.
      */
-    void open(int nChannelsOut, int nChannelsIn, string clientName, string serverName = "");
+    void open(int nChannelsOut, int nChannelsIn, std::string clientName, std::string serverName = "");
 
     /** Informs Jack the client is ready to process samples.
      * Once this is called, Jack will begin to periodically request and/or deliver
@@ -112,24 +110,24 @@ private:
     /** Pointer to the Jack client. */
     jack_client_t* client;
     /** Jack client name. */
-    string clientName;
+    std::string clientName;
     /** Jack server name. */
-    string serverName;
+    std::string serverName;
     /** Jack output ports. */
-    vector<jack_port_t*> outPorts;
+    std::vector<jack_port_t*> outPorts;
     /** Jack input ports. */
-    vector<jack_port_t*> inPorts;
+    std::vector<jack_port_t*> inPorts;
     /** Jack ports string. */
-    vector<string> ports;
+    std::vector<std::string> ports;
     /** Jack options. */
     jack_options_t options = JackNullOption;
     /** Jack status. */
     jack_status_t jackStatus;
 
     /** Output buffer. */
-    vector<sample_t*> outBuff;
+    std::vector<sample_t*> outBuff;
     /** Input buffer. */
-    vector<sample_t*> inBuff;
+    std::vector<sample_t*> inBuff;
 
     /** Flag for determining if the destructor needs to call @ref close. */
     bool closed = false;

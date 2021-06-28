@@ -6,6 +6,7 @@
 #include <thread>
 
 using namespace test;
+using namespace std;
 
 class SineGenerator : public jack::Callback {
 public:

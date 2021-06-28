@@ -4,10 +4,4 @@
 echo "Cloning submodules..."
 git submodule update --init --recursive
 
-# Run CMake
-echo "Running CMake..."
-cmake .
-
-# Run make
-echo "Running make..."
-make -j
+bash compile

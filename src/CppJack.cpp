@@ -155,7 +155,7 @@ void Client::close() {
 }
 
 int Client::_process(jack_nframes_t nFrames, void* arg) {
-    // `arg` should be a pointer to the JackClient object
+    // `arg` should be a pointer to the Client object
     Client* self = static_cast<Client*>(arg);
 
     // Prepare output buffer

@@ -25,6 +25,7 @@ public:
         if (modeOut) {
             for (int i = 0; i < n; i++) {
                 output[0][i] = rec[playhead];
+                output[1][i] = rec[playhead];
                 playhead++;
                 if (playhead >= rec.size()) playhead = 0;
             }
@@ -47,7 +48,7 @@ private:
 };
 
 int main() {
-    jack::Client client(1, 1, "CppJack_test_inout");
+    jack::Client client(2, 1, "CppJack_test_inout");
     test::check(client.isOpen(), "Client not open");
 
     InOutSwitch sw;

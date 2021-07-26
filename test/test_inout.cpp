@@ -6,8 +6,9 @@
 #include <thread>
 
 using namespace std;
+using namespace jack;
 
-class InOutSwitch : public jack::Callback {
+class InOutSwitch : public Callback {
 public:
     InOutSwitch() {
         modeIn = true;
@@ -15,7 +16,7 @@ public:
         playhead = 0;
     }
 
-    void process(int n, vector<jack::sample_t*>& output, vector<jack::sample_t*>& input) override {
+    void process(int n, vector<vector<sample_t>>& output, vector<vector<sample_t>>& input) override {
         if (modeIn) {
             rec.reserve(rec.size() + n);
             for (int i = 0; i < n; i++) {
@@ -44,24 +45,24 @@ private:
     bool modeOut;
     int playhead;
 
-    std::vector<jack::sample_t> rec;
+    vector<sample_t> rec;
 };
 
 int main() {
-    jack::Client client(2, 1, "CppJack_test_inout");
+    Client client(2, 1, "CppJack_test_inout");
     test::check(client.isOpen(), "Client not open");
 
     InOutSwitch sw;
 
     client.start(&sw);
-    std::cout << "Recording...\n";
+    cout << "Recording...\n";
 
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    this_thread::sleep_for(chrono::seconds(2));
 
     sw.switchMode();
-    std::cout << "Playing...\n";
+    cout << "Playing...\n";
 
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    this_thread::sleep_for(chrono::seconds(2));
 
     client.stop();
     client.close();

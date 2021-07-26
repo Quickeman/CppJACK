@@ -6,6 +6,7 @@
 #include <signal.h>
 
 using namespace std;
+using namespace jack;
 
 /* Unix signal handling (part 1) */
 #include <functional>
@@ -17,13 +18,16 @@ void signalHandler(int signal) { shutdownHandler(signal); }
 
 
 // Takes one channel of input, halves the amplitude, and sends it to all output channels.
-class SignalHalver : public jack::Callback {
+class SignalHalver : public Callback {
 public:
-    void process(int n, vector<jack::sample_t*>& output, vector<jack::sample_t*>& input) override {
+    void process(int n, vector<vector<sample_t>>& output, vector<vector<sample_t>>& input) override {
+        vector<sample_t> halved(n);
+        for (int i = 0; i < n; i++) {
+            halved[i] = 0.5f * input[0][i];
+        }
+
         for (int c = 0; c < output.size(); c++) { // For each output channel...
-            for (int i = 0; i < n; i++) { // For each frame/sample...
-                output[c][i] = 0.5f * input[0][i];
-            }
+            output[c] = halved;
         }
     }
 };
@@ -58,7 +62,7 @@ int main(int argc, char* argv[]) {
     client.start(&halver);
 
     // Let it run for a little bit
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    this_thread::sleep_for(chrono::seconds(5));
 
     // Stop DSP
     client.stop();

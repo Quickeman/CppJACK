@@ -20,12 +20,11 @@ typedef jack_default_audio_sample_t sample_t;
 class Callback {
 public:
     /** Method called by a @ref Client object to process samples.
-     * @param n the number of samples to process. A.K.A. the buffer size.
+     * @param n the number of samples to process, i.e. the buffer size.
      * @param output an empty vector to fill with output samples. 2D, indexed as [channel][sample].
      * @param input a vector of input samples. 2D, indexed as [channel][sample].
-     * @note the 2nd dimension of `output` and `input` are not vectors, they're raw pointers.
      */
-    virtual void process(int n, std::vector<sample_t*>& output, std::vector<sample_t*>& input) {};
+    virtual void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) {};
 };
 
 
@@ -125,9 +124,12 @@ private:
     jack_status_t jackStatus;
 
     /** Output buffer. */
-    std::vector<sample_t*> outBuff;
+    std::vector<std::vector<sample_t>> outBuff;
     /** Input buffer. */
-    std::vector<sample_t*> inBuff;
+    std::vector<std::vector<sample_t>> inBuff;
+
+    /** Stored buffer size for determining if a resize is needed. */
+    jack_nframes_t nFramesPrev = 0;
 
     /** Flag for determining if the destructor needs to call @ref close. */
     bool closed = false;

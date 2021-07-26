@@ -158,17 +158,39 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
     // `arg` should be a pointer to the Client object
     Client* self = static_cast<Client*>(arg);
 
+    // Check if a buffer resize is needed
+    if (nFrames != self->nFramesPrev) {
+        int i;
+        // Resize buffers
+        for (i = 0; i < self->inPorts.size(); i++)
+            self->inBuff[i].resize(nFrames);
+        for (i = 0; i < self->outPorts.size(); i++)
+            self->outBuff[i].resize(nFrames);
+    }
+    self->nFramesPrev = nFrames;
+
     // Prepare output buffer
     for (int i = 0; i < self->outPorts.size(); i++) {
-        self->outBuff[i] = (sample_t*)jack_port_get_buffer(self->outPorts[i], nFrames);
+        self->outBuff[i].assign(nFrames, 0.f);
     }
     // Get input samples
     for (int i = 0; i < self->inPorts.size(); i++) {
-        self->inBuff[i] = (sample_t*)jack_port_get_buffer(self->inPorts[i], nFrames);
+        sample_t* in = (sample_t*)jack_port_get_buffer(self->inPorts[i], nFrames);
+        for (int j = 0; j < nFrames; j++) {
+            self->inBuff[i][j] = in[j];
+        }
     }
 
-    // Process the samples/get output samples
+    // Send buffers to DSP callback
     self->callback->process(nFrames, self->outBuff, self->inBuff);
+
+    // Send samples to output
+    for (int i = 0; i < self->outPorts.size(); i++) {
+        sample_t* out = (sample_t*)jack_port_get_buffer(self->outPorts[i], nFrames);
+        for (int j = 0; j < nFrames; j++) {
+            out[j] = self->outBuff[i][j];
+        }
+    }
 
     return 0;
 }

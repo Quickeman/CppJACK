@@ -5,7 +5,6 @@
 #include <vector>
 #include <thread>
 
-using namespace std;
 using namespace jack;
 
 class SineGenerator : public Callback {
@@ -15,20 +14,19 @@ public:
         phase = 0.f;
     }
 
-    void process(int n, vector<vector<sample_t>>& output, vector<vector<sample_t>>& input) override {
-        vector<sample_t> sine(n);
+    void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) override {
+        std::vector<sample_t> sine(n);
         // Generate sine wave
-        for (int i = 0; i < n; i++) {
-            sine[i] = 0.5f * sinf(2.f * M_PI * phase);
+        std::for_each(sine.begin(), sine.end(), [&](sample_t& s){
+            s = 0.5f * sinf(2.f * M_PI * phase);
             phase += norm;
             if (phase >= 1.f) 
                 phase -= 1.f;
-        }
+        });
 
         // Send to output(s)
-        for (int c = 0; c < output.size(); c++) {
-            output[c] = sine;
-        }
+        for_each(output.begin(), output.end(),
+            [&sine](std::vector<sample_t>& ch){ ch = sine; });
     }
 
 private:
@@ -46,7 +44,7 @@ int main(int argc, char* argv[]) {
 
     client.start(&sinGen);
 
-    this_thread::sleep_for(chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     client.stop();
     client.close();

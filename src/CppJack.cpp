@@ -162,17 +162,17 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
     if (nFrames != self->nFramesPrev) {
         int i;
         // Resize buffers
-        for (i = 0; i < self->inPorts.size(); i++)
-            self->inBuff[i].resize(nFrames);
-        for (i = 0; i < self->outPorts.size(); i++)
-            self->outBuff[i].resize(nFrames);
+        for_each(self->inBuff.begin(), self->inBuff.end(),
+            [nFrames](vector<sample_t>& v){ v.resize(nFrames); });
+        for_each(self->outBuff.begin(), self->outBuff.end(),
+            [nFrames](vector<sample_t>& v){ v.resize(nFrames); });
     }
     self->nFramesPrev = nFrames;
 
     // Prepare output buffer
-    for (int i = 0; i < self->outPorts.size(); i++) {
-        self->outBuff[i].assign(nFrames, 0.f);
-    }
+    for_each(self->outBuff.begin(), self->outBuff.end(),
+        [nFrames](vector<sample_t>& v){ v.assign(nFrames, 0.f); });
+        
     // Get input samples
     for (int i = 0; i < self->inPorts.size(); i++) {
         sample_t* in = (sample_t*)jack_port_get_buffer(self->inPorts[i], nFrames);

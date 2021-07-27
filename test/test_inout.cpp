@@ -5,7 +5,6 @@
 #include <vector>
 #include <thread>
 
-using namespace std;
 using namespace jack;
 
 class InOutSwitch : public Callback {
@@ -16,20 +15,17 @@ public:
         playhead = 0;
     }
 
-    void process(int n, vector<vector<sample_t>>& output, vector<vector<sample_t>>& input) override {
+    void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) override {
         if (modeIn) {
-            rec.reserve(rec.size() + n);
-            for (int i = 0; i < n; i++) {
-                rec.push_back(input[0][i]);
-            }
+            std::copy(input[0].begin(), input[0].end(), std::back_inserter(rec));
         }
         if (modeOut) {
-            for (int i = 0; i < n; i++) {
-                output[0][i] = rec[playhead];
-                output[1][i] = rec[playhead];
-                playhead++;
-                if (playhead >= rec.size()) playhead = 0;
-            }
+            std::vector<sample_t>::iterator endPoint = \
+                (playhead + n) > rec.size() ? rec.end() : rec.begin() + playhead + n;
+            std::for_each(output.begin(), output.end(), [&](std::vector<sample_t>& ch)
+                { std::copy(rec.begin()+playhead, endPoint, ch.begin()); });
+            playhead += n;
+            if (playhead >= rec.size()) playhead = 0;
         }
     }
 
@@ -45,7 +41,7 @@ private:
     bool modeOut;
     int playhead;
 
-    vector<sample_t> rec;
+    std::vector<sample_t> rec;
 };
 
 int main() {
@@ -55,14 +51,14 @@ int main() {
     InOutSwitch sw;
 
     client.start(&sw);
-    cout << "Recording...\n";
+    std::cout << "Recording...\n";
 
-    this_thread::sleep_for(chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     sw.switchMode();
-    cout << "Playing...\n";
+    std::cout << "Playing...\n";
 
-    this_thread::sleep_for(chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 
     client.stop();
     client.close();

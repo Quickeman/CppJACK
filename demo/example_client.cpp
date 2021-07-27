@@ -5,13 +5,12 @@
 
 #include <signal.h>
 
-using namespace std;
 using namespace jack;
 
 /* Unix signal handling (part 1) */
 #include <functional>
 // Wrapper for the shutdown lambda expression
-function<void(int)> shutdownHandler;
+std::function<void(int)> shutdownHandler;
 // Function given as the signal handler
 void signalHandler(int signal) { shutdownHandler(signal); }
 /* End part 1 */
@@ -20,15 +19,14 @@ void signalHandler(int signal) { shutdownHandler(signal); }
 // Takes one channel of input, halves the amplitude, and sends it to all output channels.
 class SignalHalver : public Callback {
 public:
-    void process(int n, vector<vector<sample_t>>& output, vector<vector<sample_t>>& input) override {
-        vector<sample_t> halved(n);
-        for (int i = 0; i < n; i++) {
-            halved[i] = 0.5f * input[0][i];
-        }
+    void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) override {
+        std::vector<sample_t> halved(n);
 
-        for (int c = 0; c < output.size(); c++) { // For each output channel...
-            output[c] = halved;
-        }
+        std::transform(input[0].begin(), input[0].end(), halved.begin(),
+            [](sample_t& s) -> sample_t { return 0.5f * s; });
+
+        std::for_each(output.begin(), output.end(), [&halved](std::vector<sample_t>& ch)
+            { std::copy(halved.begin(), halved.end(), ch.begin()); });
     }
 };
 
@@ -47,7 +45,7 @@ int main(int argc, char* argv[]) {
     signal(SIGTSTP, signalHandler);
     // Define shutdown handler expression
     shutdownHandler = [&](int signal) {
-        cout << "CppJack example_client: caught signal " << signal << "\n";
+        std::cout << "CppJack example_client: caught signal " << signal << "\n";
         client.close();
     };
     /* End part 2 */
@@ -62,7 +60,7 @@ int main(int argc, char* argv[]) {
     client.start(&halver);
 
     // Let it run for a little bit
-    this_thread::sleep_for(chrono::seconds(5));
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 
     // Stop DSP
     client.stop();

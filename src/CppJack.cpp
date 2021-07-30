@@ -160,7 +160,6 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
 
     // Check if a buffer resize is needed
     if (nFrames != self->nFramesPrev) {
-        int i;
         // Resize buffers
         for_each(self->inBuff.begin(), self->inBuff.end(),
             [nFrames](vector<sample_t>& v){ v.resize(nFrames); });

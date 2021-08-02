@@ -4,6 +4,7 @@
 #include <math.h>
 #include <vector>
 #include <thread>
+#include <algorithm>
 
 using namespace jack;
 
@@ -25,7 +26,7 @@ public:
         });
 
         // Send to output(s)
-        for_each(output.begin(), output.end(),
+        std::for_each(output.begin(), output.end(),
             [&sine](std::vector<sample_t>& ch){ ch = sine; });
     }
 

@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <iostream>
+#include <algorithm>
 
 #include <signal.h>
 

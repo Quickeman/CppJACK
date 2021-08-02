@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <thread>
+#include <algorithm>
 
 using namespace jack;
 

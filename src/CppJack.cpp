@@ -162,23 +162,22 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
     // Check if a buffer resize is needed
     if (nFrames != self->nFramesPrev) {
         // Resize buffers
-        for_each(self->inBuff.begin(), self->inBuff.end(),
-            [nFrames](vector<sample_t>& v){ v.resize(nFrames); });
-        for_each(self->outBuff.begin(), self->outBuff.end(),
-            [nFrames](vector<sample_t>& v){ v.resize(nFrames); });
+        int i;
+        for (auto& buff : self->inBuff)
+            buff.resize(nFrames);
+        for (auto& buff : self->outBuff)
+            buff.resize(nFrames);
     }
     self->nFramesPrev = nFrames;
 
     // Prepare output buffer
-    for_each(self->outBuff.begin(), self->outBuff.end(),
-        [nFrames](vector<sample_t>& v){ v.assign(nFrames, 0.f); });
+    for (auto& buff : self->outBuff)
+        buff.assign(nFrames, 0.f);
         
     // Get input samples
     for (int i = 0; i < self->inPorts.size(); i++) {
         sample_t* in = (sample_t*)jack_port_get_buffer(self->inPorts[i], nFrames);
-        for (int j = 0; j < nFrames; j++) {
-            self->inBuff[i][j] = in[j];
-        }
+        memcpy(self->inBuff[i].data(), in, nFrames * sizeof(sample_t));
     }
 
     // Send buffers to DSP callback
@@ -187,9 +186,7 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
     // Send samples to output
     for (int i = 0; i < self->outPorts.size(); i++) {
         sample_t* out = (sample_t*)jack_port_get_buffer(self->outPorts[i], nFrames);
-        for (int j = 0; j < nFrames; j++) {
-            out[j] = self->outBuff[i][j];
-        }
+        memcpy(out, self->outBuff[i].data(), nFrames * sizeof(sample_t));
     }
 
     return 0;

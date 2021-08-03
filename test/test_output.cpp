@@ -18,16 +18,16 @@ public:
     void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) override {
         std::vector<sample_t> sine(n);
         // Generate sine wave
-        std::for_each(sine.begin(), sine.end(), [&](sample_t& s){
-            s = 0.5f * sinf(2.f * M_PI * phase);
+        for (auto& v : sine) {
+            v = 0.5f * sinf(2.f * M_PI * phase);
             phase += norm;
             if (phase >= 1.f) 
                 phase -= 1.f;
-        });
+        }
 
         // Send to output(s)
-        std::for_each(output.begin(), output.end(),
-            [&sine](std::vector<sample_t>& ch){ ch = sine; });
+        for (auto& channel : output)
+            std::copy(sine.begin(), sine.end(), channel.begin());
     }
 
 private:

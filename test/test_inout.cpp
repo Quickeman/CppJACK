@@ -23,8 +23,8 @@ public:
         if (modeOut) {
             std::vector<sample_t>::iterator endPoint = \
                 (playhead + n) > rec.size() ? rec.end() : rec.begin() + playhead + n;
-            std::for_each(output.begin(), output.end(), [&](std::vector<sample_t>& ch)
-                { std::copy(rec.begin()+playhead, endPoint, ch.begin()); });
+            for (auto& channel : output)
+                std::copy(rec.begin()+playhead, endPoint, channel.begin());
             playhead += n;
             if (playhead >= rec.size()) playhead = 0;
         }

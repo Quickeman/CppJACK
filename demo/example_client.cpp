@@ -23,11 +23,11 @@ public:
     void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) override {
         std::vector<sample_t> halved(n);
 
-        std::transform(input[0].begin(), input[0].end(), halved.begin(),
-            [](sample_t& s) -> sample_t { return 0.5f * s; });
+        for (int i = 0; i < n; i++)
+            halved[i] = 0.5f * input[0][i];
 
-        std::for_each(output.begin(), output.end(), [&halved](std::vector<sample_t>& ch)
-            { std::copy(halved.begin(), halved.end(), ch.begin()); });
+        for (auto& outChan : output)
+            std::copy(halved.begin(), halved.end(), outChan.begin());
     }
 };
 

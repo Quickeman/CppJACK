@@ -25,6 +25,9 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories(/usr/local/include)
 link_directories(/usr/local/lib)
 
+# Tell the compiler to optimise heavily
+add_compile_options(-O2)
+
 add_subdirectory(include)
 include_directories(include)
 add_subdirectory(src)

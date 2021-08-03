@@ -1,7 +1,7 @@
 #include "CppJack.h"
 
 #include <iostream>
-#include <algorithm>
+#include <cstring>
 
 using namespace std;
 

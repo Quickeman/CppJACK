@@ -159,23 +159,13 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
     // `arg` should be a pointer to the Client object
     Client* self = static_cast<Client*>(arg);
 
-    // Check if a buffer resize is needed
-    if (nFrames != self->nFramesPrev) {
-        // Resize buffers
-        int i;
-        for (auto& buff : self->inBuff)
-            buff.resize(nFrames);
-        for (auto& buff : self->outBuff)
-            buff.resize(nFrames);
-    }
-    self->nFramesPrev = nFrames;
-
     // Prepare output buffer
     for (auto& buff : self->outBuff)
         buff.assign(nFrames, 0.f);
         
     // Get input samples
     for (int i = 0; i < self->inPorts.size(); i++) {
+        self->inBuff[i].resize(nFrames);
         sample_t* in = (sample_t*)jack_port_get_buffer(self->inPorts[i], nFrames);
         memcpy(self->inBuff[i].data(), in, nFrames * sizeof(sample_t));
     }

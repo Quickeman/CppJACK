@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# Get submodules
-echo "Cloning submodules..."
-git submodule update --init --recursive
-
-bash compile

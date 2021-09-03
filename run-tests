@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Move to build directory
+cd build
+
+# Run CTest
+ctest --output-on-failure
+
+# Move back to parent directory
+cd ..

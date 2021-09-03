@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# Pull from GitHub
-echo "Pulling changes..."
-git pull
-
-# Update submodules
-echo "Updating submodules..."
-git submodule update --remote --merge

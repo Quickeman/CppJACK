@@ -92,5 +92,5 @@ foreach(demoSrc ${DEMO_SRCS})
     # Link to relevant libraries
     target_link_libraries(${demoName} ${LIB_NAME})
     # Place in executables subdirectory
-    set_target_properties(${demoName} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/demo)
+    set_target_properties(${demoName} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/demo/bin)
 endforeach(demoSrc ${DEMO_SRCS})

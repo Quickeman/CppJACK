@@ -119,6 +119,17 @@ void Client::start(Callback* cb) {
     // Outputs (labelled here as inputs as they're 'input' to the backend)
     pTmp = const_cast<char**>(jack_get_ports(client, NULL, NULL, JackPortIsPhysical|JackPortIsInput));
     for (int i = 0; i < outPorts.size(); i++) {
+        if (pTmp[i] == NULL) {
+            try {
+                throw ClientException("Trying to connect too many output ports.");
+            }
+            catch (const ClientException& e) {
+                cerr << e.what() << '\n';
+                cout << "Limiting number of output ports to " << i << ".\n";
+                setNumPorts(i, inPorts.size());
+                break;
+            }
+        }
         ports[i].assign(pTmp[i]);
         err = jack_connect(
             client,
@@ -134,6 +145,17 @@ void Client::start(Callback* cb) {
     // Inputs (labelled here as outputs as they're 'output' from the backend)
     pTmp = const_cast<char**>(jack_get_ports(client, NULL, NULL, JackPortIsPhysical|JackPortIsOutput));
     for (int i = 0; i < inPorts.size(); i++) {
+        if (pTmp[i] == NULL) {
+            try {
+                throw ClientException("Trying to connect too many input ports.");
+            }
+            catch (const ClientException& e) {
+                cerr << e.what() << '\n';
+                cout << "Limiting number of input ports to " << i << ".\n";
+                setNumPorts(outPorts.size(), i);
+                break;
+            }
+        }
         ports[outPorts.size() + i].assign(pTmp[i]);
         err = jack_connect(
             client,

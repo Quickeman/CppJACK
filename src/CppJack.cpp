@@ -1,4 +1,5 @@
 #include "CppJack.h"
+#include "exceptions.hpp"
 
 #include <iostream>
 #include <cstring>
@@ -43,9 +44,9 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
     if (client == NULL) {
         // Check the server connection was successful
         if (jackStatus & JackServerFailed) {
-            cout << "Could not connect to Jack server\n";
+            throw ClientException("Could not connect to Jack server.");
         }
-        cout << "Client failed to open\n";
+        throw ClientException("Client failed to open.");
     } else {
         closed = false;
     }
@@ -73,7 +74,7 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
 
         // No available ports error
         if (outPorts[i] == NULL) {
-            cout << "No output ports available\n";
+            throw ClientException("No output ports available.");
         }
     }
 
@@ -91,7 +92,7 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
 
         // No available ports error
         if (outPorts[i] == NULL) {
-            cout << "No input ports available\n";
+            throw ClientException("No input ports available.");
         }
     }
 }
@@ -99,7 +100,7 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
 void Client::start(Callback* cb) {
     // Check the Jack client is open first
     if (!isOpen()) {
-        cout << "Jack client not open\n";
+        throw ClientException("Jack client not open.");
         return;
     }
 
@@ -110,7 +111,7 @@ void Client::start(Callback* cb) {
     // Activate the client
     int err = jack_activate(client);
     if (err) {
-        cout << "Could not activate client\n";
+        throw ClientException("Could not activate client.");
     }
 
     // Connect ports
@@ -125,7 +126,7 @@ void Client::start(Callback* cb) {
             ports[i].data()
         );
         if (err) {
-            cout << "Could not connect output port\n";
+            throw ClientException("Could not connect output port.");
         }
     }
     jack_free(pTmp);
@@ -140,7 +141,7 @@ void Client::start(Callback* cb) {
             jack_port_name(inPorts[i])
         );
         if (err) {
-            cout << "Could not connect input port\n";
+            throw ClientException("Could not connect input port.");
         }
     }
     jack_free(pTmp);

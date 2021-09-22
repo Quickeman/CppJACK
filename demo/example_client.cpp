@@ -60,8 +60,9 @@ int main(int argc, char* argv[]) {
     // Start DSP
     client.start(&halver);
 
-    // Let it run for a little bit
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    // Run the program until the user presses a key
+    std::cout << "Press Enter to stop the demo.\n";
+    getchar();
 
     // Stop DSP
     client.stop();

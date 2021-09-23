@@ -178,6 +178,23 @@ void Client::close() {
     closed = true;
 }
 
+bool Client::isOpen() {
+    return client != nullptr;
+}
+
+jack_nframes_t Client::sampleRate() {
+    return jack_get_sample_rate(client);
+}
+
+jack_nframes_t Client::bufferSize() {
+    return jack_get_buffer_size(client);
+}
+
+jack_nframes_t Client::bufferSize(jack_nframes_t size) {
+    jack_set_buffer_size(client, size);
+    return jack_get_buffer_size(client);
+}
+
 int Client::_process(jack_nframes_t nFrames, void* arg) {
     // `arg` should be a pointer to the Client object
     Client* self = static_cast<Client*>(arg);

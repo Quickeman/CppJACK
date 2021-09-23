@@ -79,13 +79,23 @@ public:
      */
     void close();
 
+    /** @return `true` if the client is open. */
+    bool isOpen();
+
     /** Returns the client's sample rate.
      * @note Cannot be called before @ref open.
      */
-    inline jack_nframes_t sampleRate() { return jack_get_sample_rate(client); }
+    jack_nframes_t sampleRate();
 
-    /** @return `true` if the client is open. */
-    inline bool isOpen() { return client != NULL; }
+    /** Returns the client's buffer size.
+     * @note Cannot be called before @ref open. */
+    jack_nframes_t bufferSize();
+
+    /** Sets the client's buffer size.
+     * This will cause a gap in the audio flow; not recommended for real-time use.
+     * @return The buffer size accepted by Jack.
+     * @note Cannot be called before @ref open. */
+    jack_nframes_t bufferSize(jack_nframes_t size);
 
     /** Method called by the Jack server to process samples.
      * Calls the callback's process method.

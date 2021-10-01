@@ -103,12 +103,12 @@ public:
      * @param arg `this`.
      * @return Jack error code.
      */
-    static int _process(jack_nframes_t nFrames, void *arg);
+    static int _process(jack_nframes_t nFrames, void* arg);
 
     /*! Shutdown method to exit the program should the Jack server shut down
     or disconnect the client.
     @param arg `this`. */
-    static void _shutdown(void *arg);
+    static void _shutdown(void* arg);
 private:
     /** Sets the number of ports. */
     void setNumPorts(int nOut, int nIn);
@@ -137,9 +137,6 @@ private:
     std::vector<std::vector<sample_t>> outBuff;
     /** Input buffer. */
     std::vector<std::vector<sample_t>> inBuff;
-
-    /** Stored buffer size for determining if a resize is needed. */
-    jack_nframes_t nFramesPrev = 0;
 
     /** Flag for determining if the destructor needs to call @ref close. */
     bool closed = false;

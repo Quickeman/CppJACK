@@ -18,15 +18,25 @@ public:
 
     void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) override {
         if (modeIn) {
-            std::copy(input[0].begin(), input[0].end(), std::back_inserter(rec));
+            for (int i = 0; i < n; i++) {
+                sample_t samp = 0.f;
+                for (auto& inCh : input) {
+                    samp += inCh[i];
+                }
+                if (input.size() != 0)
+                    samp = samp / float(input.size());
+                rec.push_back(samp);
+            }
         }
         if (modeOut) {
-            std::vector<sample_t>::iterator endPoint = \
-                (playhead + n) > rec.size() ? rec.end() : rec.begin() + playhead + n;
+            auto endPoint = rec.begin() + playhead + n;
+            if ((playhead + n) >= rec.size())
+                endPoint = rec.end();
             for (auto& channel : output)
-                std::copy(rec.begin()+playhead, endPoint, channel.begin());
+                std::copy(rec.begin() + playhead, endPoint, channel.begin());
             playhead += n;
-            if (playhead >= rec.size()) playhead = 0;
+            if (playhead >= rec.size())
+                playhead = 0;
         }
     }
 

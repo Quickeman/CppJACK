@@ -1,7 +1,7 @@
 #include "framework/unit_test_framework.h"
 #include "CppJack.h"
 
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <thread>
 #include <algorithm>

@@ -4,11 +4,8 @@
 #include <iostream>
 #include <algorithm>
 
-#include <signal.h>
-
-using namespace jack;
-
 /* Unix signal handling (part 1) */
+#include <csignal>
 #include <functional>
 // Wrapper for the shutdown lambda expression
 std::function<void(int)> shutdownHandler;
@@ -16,6 +13,7 @@ std::function<void(int)> shutdownHandler;
 void signalHandler(int signal) { shutdownHandler(signal); }
 /* End part 1 */
 
+using namespace jack;
 
 // Takes one channel of input, halves the amplitude, and sends it to all output channels.
 class SignalHalver : public Callback {
@@ -23,11 +21,14 @@ public:
     void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) override {
         std::vector<sample_t> halved(n);
 
-        for (int i = 0; i < n; i++)
-            halved[i] = 0.5f * input[0][i];
+        for (auto& chan : input) {
+            for (int i = 0; i < n; i++) {
+                halved[i] = 0.5f * chan[i];
+            }
+        }
 
-        for (auto& outChan : output)
-            std::copy(halved.begin(), halved.end(), outChan.begin());
+        for (auto& chan : output)
+            std::copy(halved.begin(), halved.end(), chan.begin());
     }
 };
 
@@ -45,8 +46,8 @@ int main(int argc, char* argv[]) {
     signal(SIGKILL, signalHandler);
     signal(SIGTSTP, signalHandler);
     // Define shutdown handler expression
-    shutdownHandler = [&](int signal) {
-        std::cout << "CppJack example_client: caught signal " << signal << "\n";
+    shutdownHandler = [&client](int signal) {
+        std::cout << "CppJack example_client: caught signal " << signal << '\n';
         client.close();
     };
     /* End part 2 */

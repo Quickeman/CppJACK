@@ -26,8 +26,8 @@ file(GLOB SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp)
 # Library of all source code
 add_library(${LIB_NAME} ${SRCS})
 
-# Tell the compiler to optimise heavily
-target_compile_options(${LIB_NAME} PRIVATE -O2)
+# Add comiler flags
+target_compile_options(${LIB_NAME} PRIVATE -O2 -Wall -pedantic)
 
 # Put compiled library in bin
 set_target_properties(${LIB_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)

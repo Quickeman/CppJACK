@@ -97,6 +97,16 @@ public:
      * @note Cannot be called before @ref open. */
     jack_nframes_t bufferSize(jack_nframes_t size);
 
+    /** @return the number of output ports obtained by the client.
+     * @note this value may be different to that given to @ref open after
+     * calling @ref start due to the port-limiting safety functionality. */
+    size_t nOutputPorts();
+
+    /** @return the number of input ports obtained by the client.
+     * @note this value may be different to that given to @ref open after
+     * calling @ref start due to the port-limiting safety functionality. */
+    size_t nInputPorts();
+
     /** Method called by the Jack server to process samples.
      * Calls the callback's process method.
      * @param nFrames number of frames to process – the buffer size.

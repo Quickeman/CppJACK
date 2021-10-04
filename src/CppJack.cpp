@@ -195,6 +195,14 @@ jack_nframes_t Client::bufferSize(jack_nframes_t size) {
     return jack_get_buffer_size(client);
 }
 
+size_t Client::nOutputPorts() {
+    return outPorts.size();
+}
+
+size_t Client::nInputPorts() {
+    return inPorts.size();
+}
+
 int Client::_process(jack_nframes_t nFrames, void* arg) {
     // `arg` should be a pointer to the Client object
     Client* self = static_cast<Client*>(arg);

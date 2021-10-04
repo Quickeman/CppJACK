@@ -206,8 +206,9 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
     // Get input samples
     for (int i = 0; i < self.inPorts.size(); i++) {
         self.inBuff[i].resize(nFrames);
-        auto in = static_cast<sample_t*>(jack_port_get_buffer(self.inPorts[i], nFrames));
-        memcpy(self.inBuff[i].data(), in, nFrames * sizeof(sample_t));
+        memcpy(self.inBuff[i].data(),
+            jack_port_get_buffer(self.inPorts[i], nFrames),
+            nFrames * sizeof(sample_t));
     }
 
     // Send buffers to DSP callback
@@ -215,8 +216,9 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
 
     // Send samples to output
     for (int i = 0; i < self.outPorts.size(); i++) {
-        auto out = static_cast<sample_t*>(jack_port_get_buffer(self.outPorts[i], nFrames));
-        memcpy(out, self.outBuff[i].data(), nFrames * sizeof(sample_t));
+        memcpy(jack_port_get_buffer(self.outPorts[i], nFrames),
+            self.outBuff[i].data(),
+            nFrames * sizeof(sample_t));
     }
 
     return 0;

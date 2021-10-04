@@ -160,11 +160,13 @@ void Client::start(Callback* cb) {
 }
 
 void Client::stop() {
-    jack_deactivate(client);
+    if (isOpen())
+        jack_deactivate(client);
 }
 
 void Client::close() {
-    jack_client_close(client);
+    if (isOpen())
+        jack_client_close(client);
     closed = true;
 }
 
@@ -195,26 +197,26 @@ size_t Client::nInputPorts() {
 
 int Client::_process(jack_nframes_t nFrames, void* arg) {
     // `arg` should be a pointer to the Client object
-    Client* self = static_cast<Client*>(arg);
+    Client& self = *static_cast<Client*>(arg);
 
     // Prepare output buffer
-    for (auto& buff : self->outBuff)
+    for (auto& buff : self.outBuff)
         buff.assign(nFrames, 0.f);
         
     // Get input samples
-    for (int i = 0; i < self->inPorts.size(); i++) {
-        self->inBuff[i].resize(nFrames);
-        sample_t* in = (sample_t*)jack_port_get_buffer(self->inPorts[i], nFrames);
-        memcpy(self->inBuff[i].data(), in, nFrames * sizeof(sample_t));
+    for (int i = 0; i < self.inPorts.size(); i++) {
+        self.inBuff[i].resize(nFrames);
+        auto in = static_cast<sample_t*>(jack_port_get_buffer(self.inPorts[i], nFrames));
+        memcpy(self.inBuff[i].data(), in, nFrames * sizeof(sample_t));
     }
 
     // Send buffers to DSP callback
-    self->callback->process(nFrames, self->outBuff, self->inBuff);
+    self.callback->process(nFrames, self.outBuff, self.inBuff);
 
     // Send samples to output
-    for (int i = 0; i < self->outPorts.size(); i++) {
-        sample_t* out = (sample_t*)jack_port_get_buffer(self->outPorts[i], nFrames);
-        memcpy(out, self->outBuff[i].data(), nFrames * sizeof(sample_t));
+    for (int i = 0; i < self.outPorts.size(); i++) {
+        auto out = static_cast<sample_t*>(jack_port_get_buffer(self.outPorts[i], nFrames));
+        memcpy(out, self.outBuff[i].data(), nFrames * sizeof(sample_t));
     }
 
     return 0;

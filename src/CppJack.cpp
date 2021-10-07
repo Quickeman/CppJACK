@@ -61,8 +61,8 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
 
     // Create the ports/channels
     // Outputs
-    for (int i = 0; i < nChannelsOut; i++) {
-        string name = "output";
+    for (int i { 0 }; i < nChannelsOut; i++) {
+        string name { "output" };
         name.append(to_string(i + 1));
         outPorts[i] = jack_port_register(
             client,
@@ -79,8 +79,8 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
     }
 
     // Inputs
-    for (int i = 0; i < nChannelsIn; i++) {
-        string name = "input";
+    for (int i { 0 }; i < nChannelsIn; i++) {
+        string name { "input" };
         name.append(to_string(i + 1));
         inPorts[i] = jack_port_register(
             client,
@@ -100,7 +100,7 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
 void Client::start(Callback* cb) {
     // Check the Jack client is open first
     if (!isOpen()) {
-        throw ClientException("Jack client not open.");
+        throw ClientException("start: Jack client not open.");
         return;
     }
 
@@ -109,15 +109,14 @@ void Client::start(Callback* cb) {
     jack_set_process_callback(client, Client::_process, this);
 
     // Activate the client
-    int err = jack_activate(client);
+    int err { jack_activate(client) };
     if (err) {
         throw ClientException("Could not activate client.");
     }
 
     // Connect ports
-    char** pTmp;
     // Outputs (labelled here as inputs as they're 'input' to the backend)
-    pTmp = const_cast<char**>(jack_get_ports(client, NULL, NULL, JackPortIsPhysical|JackPortIsInput));
+    auto pTmp { const_cast<char**>(jack_get_ports(client, NULL, NULL, JackPortIsPhysical|JackPortIsInput)) };
     for (int i = 0; i < outPorts.size(); i++) {
         if (pTmp[i] == NULL) {
             cerr << "Trying to connect too many (" << i+1 << ") output ports.\n";
@@ -197,14 +196,14 @@ size_t Client::nInputPorts() {
 
 int Client::_process(jack_nframes_t nFrames, void* arg) {
     // `arg` should be a pointer to the Client object
-    Client& self = *static_cast<Client*>(arg);
+    Client& self { *static_cast<Client*>(arg) };
 
     // Prepare output buffer
     for (auto& buff : self.outBuff)
         buff.assign(nFrames, 0.f);
         
     // Get input samples
-    for (int i = 0; i < self.inPorts.size(); i++) {
+    for (int i { 0 }; i < self.inPorts.size(); i++) {
         self.inBuff[i].resize(nFrames);
         memcpy(self.inBuff[i].data(),
             jack_port_get_buffer(self.inPorts[i], nFrames),

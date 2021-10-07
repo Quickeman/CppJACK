@@ -149,7 +149,7 @@ private:
     std::vector<std::vector<sample_t>> inBuff;
 
     /** Flag for determining if the destructor needs to call @ref close. */
-    bool closed = false;
+    bool closed { false };
 };
 
 } // namespace jack

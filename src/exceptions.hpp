@@ -8,7 +8,7 @@ namespace jack {
 
 class ClientException : public std::exception {
 public:
-    ClientException(std::string msg): msg(msg) {}
+    ClientException(std::string msg): msg{msg} {}
 
     const char* what() const throw() {
         return msg.data();

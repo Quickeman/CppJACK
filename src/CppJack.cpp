@@ -169,15 +169,15 @@ void Client::close() {
     closed = true;
 }
 
-bool Client::isOpen() {
+bool Client::isOpen() const {
     return client != nullptr;
 }
 
-jack_nframes_t Client::sampleRate() {
+jack_nframes_t Client::sampleRate() const {
     return jack_get_sample_rate(client);
 }
 
-jack_nframes_t Client::bufferSize() {
+jack_nframes_t Client::bufferSize() const {
     return jack_get_buffer_size(client);
 }
 
@@ -186,11 +186,11 @@ jack_nframes_t Client::bufferSize(jack_nframes_t size) {
     return jack_get_buffer_size(client);
 }
 
-size_t Client::nOutputPorts() {
+size_t Client::nOutputPorts() const {
     return outPorts.size();
 }
 
-size_t Client::nInputPorts() {
+size_t Client::nInputPorts() const {
     return inPorts.size();
 }
 

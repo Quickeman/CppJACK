@@ -80,16 +80,16 @@ public:
     void close();
 
     /** @return `true` if the client is open. */
-    bool isOpen();
+    bool isOpen() const;
 
     /** Returns the client's sample rate.
      * @note Cannot be called before @ref open.
      */
-    jack_nframes_t sampleRate();
+    jack_nframes_t sampleRate() const;
 
     /** Returns the client's buffer size.
      * @note Cannot be called before @ref open. */
-    jack_nframes_t bufferSize();
+    jack_nframes_t bufferSize() const;
 
     /** Sets the client's buffer size.
      * This will cause a gap in the audio flow; not recommended for real-time use.
@@ -100,12 +100,12 @@ public:
     /** @return the number of output ports obtained by the client.
      * @note this value may be different to that given to @ref open after
      * calling @ref start due to the port-limiting safety functionality. */
-    size_t nOutputPorts();
+    size_t nOutputPorts() const;
 
     /** @return the number of input ports obtained by the client.
      * @note this value may be different to that given to @ref open after
      * calling @ref start due to the port-limiting safety functionality. */
-    size_t nInputPorts();
+    size_t nInputPorts() const;
 
     /** Method called by the Jack server to process samples.
      * Calls the callback's process method.
@@ -139,7 +139,7 @@ private:
     /** Jack ports string. */
     std::vector<std::string> ports;
     /** Jack options. */
-    jack_options_t options = JackNullOption;
+    jack_options_t options { JackNullOption };
     /** Jack status. */
     jack_status_t jackStatus;
 

@@ -12,7 +12,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 
 # Make sure the compiler looks here for Jack source files
-if(UNIX)
+if(APPLE)
     include_directories(/usr/local/include)
     link_directories(/usr/local/lib)
 endif()

@@ -117,7 +117,7 @@ void Client::start(Callback* cb) {
     // Connect ports
     // Outputs (labelled here as inputs as they're 'input' to the backend)
     auto pTmp { const_cast<char**>(jack_get_ports(client, NULL, NULL, JackPortIsPhysical|JackPortIsInput)) };
-    for (int i = 0; i < outPorts.size(); i++) {
+    for (size_t i {0}; i < outPorts.size(); i++) {
         if (pTmp[i] == NULL) {
             cerr << "Trying to connect too many (" << i+1 << ") output ports.\n";
             cout << "Limiting number of output ports to " << i << ".\n";
@@ -138,7 +138,7 @@ void Client::start(Callback* cb) {
 
     // Inputs (labelled here as outputs as they're 'output' from the backend)
     pTmp = const_cast<char**>(jack_get_ports(client, NULL, NULL, JackPortIsPhysical|JackPortIsOutput));
-    for (int i = 0; i < inPorts.size(); i++) {
+    for (size_t i {0}; i < inPorts.size(); i++) {
         if (pTmp[i] == NULL) {
             cerr << "Trying to connect too many (" << i+1 << ") input ports.\n";
             cout << "Limiting number of input ports to " << i << ".\n";
@@ -203,7 +203,7 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
         buff.assign(nFrames, 0.f);
         
     // Get input samples
-    for (int i { 0 }; i < self.inPorts.size(); i++) {
+    for (size_t i {0}; i < self.inPorts.size(); i++) {
         self.inBuff[i].resize(nFrames);
         memcpy(self.inBuff[i].data(),
             jack_port_get_buffer(self.inPorts[i], nFrames),
@@ -214,7 +214,7 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
     self.callback->process(nFrames, self.outBuff, self.inBuff);
 
     // Send samples to output
-    for (int i = 0; i < self.outPorts.size(); i++) {
+    for (size_t i {0}; i < self.outPorts.size(); i++) {
         memcpy(jack_port_get_buffer(self.outPorts[i], nFrames),
             self.outBuff[i].data(),
             nFrames * sizeof(sample_t));

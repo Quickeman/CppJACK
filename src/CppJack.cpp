@@ -26,14 +26,14 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
     if (this->serverName != "") {
         // If a server name is provided, use it
         options = JackServerName;
-        client = jack_client_open(
+        _client = jack_client_open(
             this->clientName.data(),
             options,
             &jackStatus,
             this->serverName.data()
         );
     } else {
-        client = jack_client_open(
+        _client = jack_client_open(
             this->clientName.data(),
             options,
             &jackStatus
@@ -41,7 +41,7 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
     }
 
     // Check the client opened
-    if (client == NULL) {
+    if (_client == NULL) {
         // Check the server connection was successful
         if (jackStatus & JackServerFailed) {
             throw ClientException("Could not connect to Jack server.");
@@ -53,11 +53,11 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
 
     if (jackStatus & JackNameNotUnique) {
         // Non-unique name given, retrieve assigned name
-        clientName.assign(jack_get_client_name(client));
+        clientName.assign(jack_get_client_name(_client));
     }
 
     // Assign shutdown method
-    jack_on_shutdown(client, Client::_shutdown, this);
+    jack_on_shutdown(_client, Client::_shutdown, this);
 
     // Create the ports/channels
     // Outputs
@@ -65,7 +65,7 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
         string name { "output" };
         name.append(to_string(i + 1));
         outPorts[i] = jack_port_register(
-            client,
+            _client,
             name.data(),
             JACK_DEFAULT_AUDIO_TYPE,
             JackPortIsOutput,
@@ -83,7 +83,7 @@ void Client::open(int nChannelsOut, int nChannelsIn, string clientName, string s
         string name { "input" };
         name.append(to_string(i + 1));
         inPorts[i] = jack_port_register(
-            client,
+            _client,
             name.data(),
             JACK_DEFAULT_AUDIO_TYPE,
             JackPortIsInput,
@@ -106,17 +106,17 @@ void Client::start(Callback* cb) {
 
     // Set callback
     callback = cb;
-    jack_set_process_callback(client, Client::_process, this);
+    jack_set_process_callback(_client, Client::_process, this);
 
     // Activate the client
-    int err { jack_activate(client) };
+    int err { jack_activate(_client) };
     if (err) {
         throw ClientException("Could not activate client.");
     }
 
     // Connect ports
     // Outputs (labelled here as inputs as they're 'input' to the backend)
-    auto pTmp { const_cast<char**>(jack_get_ports(client, NULL, NULL, JackPortIsPhysical|JackPortIsInput)) };
+    auto pTmp { const_cast<char**>(jack_get_ports(_client, NULL, NULL, JackPortIsPhysical|JackPortIsInput)) };
     for (size_t i {0}; i < outPorts.size(); i++) {
         if (pTmp[i] == NULL) {
             cerr << "Trying to connect too many (" << i+1 << ") output ports.\n";
@@ -126,8 +126,8 @@ void Client::start(Callback* cb) {
         }
         ports[i].assign(pTmp[i]);
         err = jack_connect(
-            client,
-            jack_port_name(outPorts[i]), 
+            _client,
+            jack_port_name(outPorts[i]),
             ports[i].data()
         );
         if (err) {
@@ -137,7 +137,7 @@ void Client::start(Callback* cb) {
     jack_free(pTmp);
 
     // Inputs (labelled here as outputs as they're 'output' from the backend)
-    pTmp = const_cast<char**>(jack_get_ports(client, NULL, NULL, JackPortIsPhysical|JackPortIsOutput));
+    pTmp = const_cast<char**>(jack_get_ports(_client, NULL, NULL, JackPortIsPhysical|JackPortIsOutput));
     for (size_t i {0}; i < inPorts.size(); i++) {
         if (pTmp[i] == NULL) {
             cerr << "Trying to connect too many (" << i+1 << ") input ports.\n";
@@ -147,7 +147,7 @@ void Client::start(Callback* cb) {
         }
         ports[outPorts.size() + i].assign(pTmp[i]);
         err = jack_connect(
-            client,
+            _client,
             ports[outPorts.size() + i].data(),
             jack_port_name(inPorts[i])
         );
@@ -160,30 +160,30 @@ void Client::start(Callback* cb) {
 
 void Client::stop() {
     if (isOpen())
-        jack_deactivate(client);
+        jack_deactivate(_client);
 }
 
 void Client::close() {
     if (isOpen())
-        jack_client_close(client);
+        jack_client_close(_client);
     closed = true;
 }
 
 bool Client::isOpen() const {
-    return client != nullptr;
+    return _client != nullptr;
 }
 
 jack_nframes_t Client::sampleRate() const {
-    return jack_get_sample_rate(client);
+    return jack_get_sample_rate(_client);
 }
 
 jack_nframes_t Client::bufferSize() const {
-    return jack_get_buffer_size(client);
+    return jack_get_buffer_size(_client);
 }
 
 jack_nframes_t Client::bufferSize(jack_nframes_t size) {
-    jack_set_buffer_size(client, size);
-    return jack_get_buffer_size(client);
+    jack_set_buffer_size(_client, size);
+    return jack_get_buffer_size(_client);
 }
 
 size_t Client::nOutputPorts() const {
@@ -201,7 +201,7 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
     // Prepare output buffer
     for (auto& buff : self.outBuff)
         buff.assign(nFrames, 0.f);
-        
+
     // Get input samples
     for (size_t i {0}; i < self.inPorts.size(); i++) {
         self.inBuff[i].resize(nFrames);

@@ -74,7 +74,7 @@ public:
     void stop();
 
     /** Closes the Jack client.
-     * @note You do not need to call this if the @ref Client object is at the 
+     * @note You do not need to call this if the @ref Client object is at the
      * end of its lifetime.
      */
     void close();
@@ -107,6 +107,12 @@ public:
      * calling @ref start due to the port-limiting safety functionality. */
     size_t nInputPorts() const;
 
+    /** @returns a pointer to the underlying jack client structure.
+     * Can be used to interact with jack's C API directly. */
+    inline jack_client_t* client() {
+        return this->_client;
+    }
+
     /** Method called by the Jack server to process samples.
      * Calls the callback's process method.
      * @param nFrames number of frames to process – the buffer size.
@@ -127,7 +133,7 @@ private:
     Callback* callback;
 
     /** Pointer to the Jack client. */
-    jack_client_t* client;
+    jack_client_t* _client;
     /** Jack client name. */
     std::string clientName;
     /** Jack server name. */

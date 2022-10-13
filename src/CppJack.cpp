@@ -107,6 +107,10 @@ void Client::start(Callback* cb) {
     // Set callback
     callback = cb;
     jack_set_process_callback(_client, Client::_process, this);
+    jack_set_buffer_size_callback(_client, Client::_buffer_size, this);
+
+    // Set initial buffer size
+    this->_buffer_size(jack_get_buffer_size(_client), this);
 
     // Activate the client
     int err { jack_activate(_client) };
@@ -221,6 +225,18 @@ int Client::_process(jack_nframes_t nFrames, void* arg) {
     }
 
     return 0;
+}
+
+int Client::_buffer_size(jack_nframes_t nFrames, void* arg) {
+    // `arg` should be a pointer to the Client object
+    Client& self { *static_cast<Client*>(arg) };
+
+    for (auto& buff : self.outBuff)
+        buff.resize(nFrames);
+    for (auto& buff : self.inBuff)
+        buff.resize(nFrames);
+
+    self.callback->set_buffer_size(nFrames);
 }
 
 void Client::_shutdown(void* arg) {

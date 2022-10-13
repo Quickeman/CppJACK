@@ -19,8 +19,6 @@ using namespace jack;
 class SignalHalver : public Callback {
 public:
     void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) override {
-        std::vector<sample_t> halved(n);
-
         for (auto& chan : input) {
             for (int i = 0; i < n; i++) {
                 halved[i] = 0.5f * chan[i];
@@ -30,6 +28,13 @@ public:
         for (auto& chan : output)
             std::copy(halved.begin(), halved.end(), chan.begin());
     }
+
+    void set_buffer_size(size_t N) override {
+        this->halved.resize(N);
+    }
+
+private:
+    std::vector<sample_t> halved;
 };
 
 

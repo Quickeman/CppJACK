@@ -16,12 +16,13 @@ public:
     }
 
     void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) override {
-        std::vector<sample_t> sine(n);
+        test::check(this->sine.size() == n, "Buffer size incorrect: expected " + std::to_string(this->sine.size()) + ", given " + std::to_string(n));
+
         // Generate sine wave
         for (auto& v : sine) {
             v = 0.5f * sinf(2.f * M_PI * phase);
             phase += norm;
-            if (phase >= 1.f) 
+            if (phase >= 1.f)
                 phase -= 1.f;
         }
 
@@ -30,11 +31,17 @@ public:
             std::copy(sine.begin(), sine.end(), channel.begin());
     }
 
+    void set_buffer_size(size_t N) override {
+        this->sine.resize(N);
+    }
+
 private:
     float sRate;
     const float frequency = 440.f;
     float norm;
     float phase;
+
+    std::vector<sample_t> sine;
 };
 
 int main(int argc, char* argv[]) {

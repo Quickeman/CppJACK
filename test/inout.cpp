@@ -28,6 +28,7 @@ public:
                 rec.push_back(samp);
             }
         }
+
         if (modeOut) {
             auto endPoint = rec.begin() + playhead + n;
             if ((playhead + n) >= rec.size())
@@ -41,7 +42,8 @@ public:
     }
 
     void switchMode() {
-        if (modeOut) rec.clear();
+        if (modeOut)
+            rec.clear();
         modeIn = !modeIn;
         modeOut = !modeOut;
         playhead = 0;

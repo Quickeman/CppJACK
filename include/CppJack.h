@@ -13,9 +13,9 @@ namespace jack {
 
 typedef jack_default_audio_sample_t sample_t;
 
-/** Abstract sample retrieval callback class.
- * Inherit from this class and override the @ref process method to implement
- * your audio client.
+/** Abstract DSP callback class.
+ * Inherit from this class and override the methods to implement your audio
+ * client.
  */
 class Callback {
 public:
@@ -24,7 +24,10 @@ public:
      * @param output an empty vector to fill with output samples. 2D, indexed as [channel][sample].
      * @param input a vector of input samples. 2D, indexed as [channel][sample].
      */
-    virtual void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) {};
+    virtual void process(int n, std::vector<std::vector<sample_t>>& output, std::vector<std::vector<sample_t>>& input) {}
+
+    /** Method called by a @ref Client object when the buffer size changes. */
+    virtual void set_buffer_size(size_t N) {}
 };
 
 
@@ -120,6 +123,9 @@ public:
      * @return Jack error code.
      */
     static int _process(jack_nframes_t nFrames, void* arg);
+
+    /** Method called by the Jack server on a change in buffer size. */
+    static int _buffer_size(jack_nframes_t nFrames, void* arg);
 
     /*! Shutdown method to exit the program should the Jack server shut down
     or disconnect the client.

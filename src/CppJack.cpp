@@ -237,6 +237,8 @@ int Client::_buffer_size(jack_nframes_t nFrames, void* arg) {
         buff.resize(nFrames);
 
     self.callback->set_buffer_size(nFrames);
+
+    return 0;
 }
 
 void Client::_shutdown(void* arg) {
